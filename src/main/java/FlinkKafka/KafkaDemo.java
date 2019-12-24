@@ -51,6 +51,8 @@ public class KafkaDemo {
         
         //*/
 
+        // 下面是对 这个DS进行了多次 mapreduce .
+        // 
         // DataStream<Tuple2<String, String>> kf2 = kafkaData.flatMap(new TweetParser());
         // DataStream<String> kf3 = kafkaData.flatMap(new TweetTextParser());
         // DataStream<String> kf4 = kafkaData.flatMap(new TweetParserAddCount());
@@ -72,34 +74,48 @@ public class KafkaDemo {
 
         //kf3.writeAsText("/Users/mohammedabdulrazzak/Documents/ZignalLabs/Technology/ApacheFlick//kafka.txt");
 
+        // 写回数据源???kafka的另一个频道里去.
+        // 这就完成了一个数据转换过程. 好简单.
         // kf4.addSink(new FlinkKafkaProducer011( "flinkSink", new SimpleStringSchema(), p));
 
         env.execute("Kafka Flink Realtime to sink");
     }
 
+    // 用json解析器解析json 
     public static class TweetParser	implements FlatMapFunction<String, Tuple2<String, String>>
     {
         public void flatMap(String value, Collector<Tuple2<String,String >> out) throws Exception
         {
             ObjectMapper jsonParser = new ObjectMapper();
+            // node 就是解出来的json串.
             JsonNode node = jsonParser.readValue(value, JsonNode.class);
+            // 如果 有user 字段,并且有语言字段,并且语言字段等于en. 则这个用户是英语用户.
+            // 看来这个数据源是 Tweet的流数据.也就是打点数据的清洗.ETL.
             boolean isEnglish =
                     node.has("user") &&
                             node.get("user").has("lang") &&
                             node.get("user").get("lang").asText().equals("en");
+            // 如果有 body 则表示有内容.
             boolean hasText = node.has("body");
+            // 默认字符
             String tweet = "No Text  ???  ";
+            // 如果有body用body 否则用text.
             if (hasText)
             {
                 tweet = node.get("body").asText();
             } else {
                 tweet = node.get ("text").asText();
             }
+            // 然后再加上一个计数.这个是第几个.
             tweet = tweet + " ===  Tweete Count: "+(globalCounter++).toString();
+            // 将所有结果输出成Tuple2 二维数组
+            // 这里将元数据返回给下一个处理程序.也就是抽取出来一个字段的有效数据.
+            // ['hahahah === Tweet Count:10','{body:"hahah"}']
             out.collect(new Tuple2<String, String>(tweet, value));
         }
     }
 
+    // 对tweet的text直接做解析.保存到一个DF(DS)中
     public static class TweetTextParser	implements FlatMapFunction<String, String>
     {
         public void flatMap(String value, Collector<String> out) throws Exception
@@ -109,6 +125,7 @@ public class KafkaDemo {
         }
     }
 
+    // 边解析边增加计数量.
     public static class TweetParserAddCount	implements FlatMapFunction<String, String>
     {
         public void flatMap(String value, Collector<String> out) throws Exception
@@ -118,6 +135,7 @@ public class KafkaDemo {
         }
     }
 
+    // 这应该是上面的解析的分解出来的方法. 目的是一样的.
     public static String getText (String value) {
         String tweet = "No Text  ???  ";
         try {
