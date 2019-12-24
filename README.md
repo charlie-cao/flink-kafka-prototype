@@ -32,6 +32,6 @@ https://github.com/mabdulrazzak/flink-kafka-prototype/tree/master/src/main/java
 
 所以还是离开这些东西,从头开始整,才能搞清楚.
 
-下一步用新的java语法写,会舒服很多.不过还是熟悉一下java语法.以及流运算的架构用法.这些.
+先熟悉一下,下一步是基础架构 ETL 数据仓库 血缘关系.
 
-最终发现还是在github上找源码看来的更直接有效. 看别人的教程实在是太绕弯了.
+还是在github上直接看源码来的更直接有效. 看别人的教程实在是太绕弯了.
