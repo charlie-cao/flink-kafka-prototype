@@ -20,29 +20,41 @@ public class KafkaDemo {
     public static void main(String[] args) throws Exception
     {
 
+        //这里是个环境 类似spark 的sc.
         final StreamExecutionEnvironment env =  StreamExecutionEnvironment.getExecutionEnvironment();
         Properties p = new Properties();
         p.setProperty("bootstrap.servers", "127.0.0.1:9092");
         p.setProperty("zookeeper.connect", "localhost:2181");
         p.setProperty("group.id", "test");
+        // sc. add source. 类似 sc.loaddb...之类.
+        // FlinkKafkaConsumer011 ("topic",结构)
+        // SimpleStringSchema 简化的字符结构.
+        // 最后一个参数是 p一个参数数组.
+        // 返回是一个DS. data 流 里面都是字符串.
+        // 名字叫kafkaData.
         DataStream<String> kafkaData = env.addSource(new FlinkKafkaConsumer011("test", new SimpleStringSchema(), p));
+
         //##########Going to perform 3 Tuple operation to see how the DAG looks like. ###########
-        /*#####################
+        // 将执行3 Tuple操作以查看DAG的外观。
+        // /*#####################
+        // 这是一个map 函数. 也可以理解是个转换,或者说是对单行数据处理的闭包函数. 或者叫lamda function.
         kafkaData.flatMap(new FlatMapFunction<String, Tuple2<String, Integer>>()
-        {
-            public void flatMap(String value, Collector<Tuple2<String, Integer>> out)
             {
-                String[] words = value.split(" ");
-                for (String word : words)
-                    out.collect(new Tuple2<String, Integer>(word, 1));
-            }	})
-                .keyBy(0)
-                .sum(1)
-        .writeAsText("/Users/mohammedabdulrazzak/Documents/ZignalLabs/Technology/ApacheFlick//kafka.txt");
-*/
-        DataStream<Tuple2<String, String>> kf2 = kafkaData.flatMap(new TweetParser());
-        DataStream<String> kf3 = kafkaData.flatMap(new TweetTextParser());
-        DataStream<String> kf4 = kafkaData.flatMap(new TweetParserAddCount());
+                public void flatMap(String value, Collector<Tuple2<String, Integer>> out)
+                {
+                    String[] words = value.split(" ");
+                    for (String word : words)
+                        out.collect(new Tuple2<String, Integer>(word, 1));
+                }	
+            }
+        ).keyBy(0).sum(1).writeAsText("/Users/caolei/Desktop/big-data/workspace_mvn/flink-kafka/flinkkafka/kafka.txt");
+        
+        //*/
+
+        // DataStream<Tuple2<String, String>> kf2 = kafkaData.flatMap(new TweetParser());
+        // DataStream<String> kf3 = kafkaData.flatMap(new TweetTextParser());
+        // DataStream<String> kf4 = kafkaData.flatMap(new TweetParserAddCount());
+
 
         //kf2.keyBy(1).writeAsText("/Users/mohammedabdulrazzak/Documents/ZignalLabs/Technology/ApacheFlick//kafka.txt");
                 /*
@@ -54,14 +66,13 @@ public class KafkaDemo {
                 for (String word : words)
                     out.collect(new Tuple2<String, Integer>(word, 1));
             }	})
-
                 .keyBy(0)
                 .sum(1)
 */
 
         //kf3.writeAsText("/Users/mohammedabdulrazzak/Documents/ZignalLabs/Technology/ApacheFlick//kafka.txt");
 
-        kf4.addSink(new FlinkKafkaProducer011( "flinkSink", new SimpleStringSchema(), p));
+        // kf4.addSink(new FlinkKafkaProducer011( "flinkSink", new SimpleStringSchema(), p));
 
         env.execute("Kafka Flink Realtime to sink");
     }
