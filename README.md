@@ -1,10 +1,60 @@
 # flink-kafka-prototype
 
+
 # kafka setup
+
+下载
+```
+cd /Users/caolei/Desktop/big-data
+
+wget http://mirror.cogentco.com/pub/apache/kafka/2.4.0/kafka_2.12-2.4.0.tgz
+```
+
+解压
+```
+tar -zxvf kafka_2.12-2.4.0.tgz
+```
+
+启动zookeeper
+```
+cd /Users/caolei/Desktop/big-data/kafka_2.12-2.4.0
+
+bin/zookeeper-server-start.sh config/zookeeper.properties
+```
+
+启动kafka
+```
+bin/kafka-server-start.sh config/server.properties
+```
+
+创建Topic
+```
+bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic test
+```
+查看Topic
+```
+bin/kafka-topics.sh --list --bootstrap-server localhost:9092
+```
+测试发送数据
+```
+bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test
+```
+测试接受数据
+```
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning
+```
 
 # flink setup
 
+```
+cd /Users/caolei/Desktop/big-data/flink-1.9.1
+
+./bin/start-cluster.sh
+```
+
 # build 
+
+cd /Users/caolei/Desktop/big-data/workspace/flink/flink-kafka-prototype
 
 mvn clean package
 
@@ -12,6 +62,12 @@ mvn clean package
 
 submit to http://localhost:8081/
 
+# test
+```
+bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test
+
+tail -f /Users/caolei/Desktop/big-data/workspace_mvn/flink-kafka/flinkkafka/kafka.txt
+```
 
 ---
 
