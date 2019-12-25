@@ -47,7 +47,7 @@ public class KafkaDemo {
                         out.collect(new Tuple2<String, Integer>(word, 1));
                 }	
             }
-        ).keyBy(0).sum(1).writeAsText("/Users/caolei/Desktop/big-data/workspace_mvn/flink-kafka/flinkkafka/kafka.txt");
+        ).keyBy(0).sum(1).writeAsText("cat");
         
         //*/
 

@@ -69,6 +69,11 @@ bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test
 tail -f /Users/caolei/Desktop/big-data/workspace_mvn/flink-kafka/flinkkafka/kafka.txt
 ```
 
+# 命令行提交,注意需要删除之前生成的文件.
+```
+/Users/caolei/Desktop/big-data/flink-1.9.1/bin/flink run -c FlinkKafka.KafkaDemo target/flink-realtime-1.0-SNAPSHOT-jar-with-dependencies.jar
+/Users/caolei/Desktop/big-data/flink-1.9.1/bin/flink run -d -c FlinkKafka.KafkaDemo target/flink-realtime-1.0-SNAPSHOT-jar-with-dependencies.jar
+```
 ---
 
 终于把整个流运算流程走通了.好费劲啊.
