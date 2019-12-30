@@ -96,3 +96,27 @@ https://github.com/mabdulrazzak/flink-kafka-prototype/tree/master/src/main/java
 先熟悉一下,下一步是基础架构 ETL 数据仓库 血缘关系.
 
 还是在github上直接看源码来的更直接有效. 看别人的教程实在是太绕弯了.
+
+
+----
+
+scrapy kafka flink(ETL) kafka mysql
+
+汇总
+人工智能推荐
+----
+最小模型.
+启动3个项目
+
+#1 实验1
+1 定时每日采集新浪新闻
+2 发送kafka管道
+3 清洗 记录分类
+4 发送kafka管道
+5 把结果放入mysql
+
+#2 实验2
+在实验一基础上增加用户画像功能
+
+#2 实验3
+在实验2基础上增加人工智能推荐功能.

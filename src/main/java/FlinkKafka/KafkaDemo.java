@@ -38,6 +38,9 @@ public class KafkaDemo {
         // 将执行3 Tuple操作以查看DAG的外观。
         // /*#####################
         // 这是一个map 函数. 也可以理解是个转换,或者说是对单行数据处理的闭包函数. 或者叫lamda function.
+        
+        // 这样可以输出
+        kafkaData.print();
         kafkaData.flatMap(new FlatMapFunction<String, Tuple2<String, Integer>>()
             {
                 public void flatMap(String value, Collector<Tuple2<String, Integer>> out)
@@ -47,8 +50,8 @@ public class KafkaDemo {
                         out.collect(new Tuple2<String, Integer>(word, 1));
                 }	
             }
-        ).keyBy(0).sum(1).writeAsText("cat");
-        
+        ).keyBy(0).sum(1).writeAsText("/Users/caolei/Desktop/big-data/workspace_mvn/flink-kafka/flinkkafka/kafka.txt");
+
         //*/
 
         // 下面是对 这个DS进行了多次 mapreduce .
