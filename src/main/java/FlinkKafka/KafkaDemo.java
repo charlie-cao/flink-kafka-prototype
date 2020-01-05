@@ -41,16 +41,35 @@ public class KafkaDemo {
         
         // 这样可以输出
         kafkaData.print();
+        
         kafkaData.flatMap(new FlatMapFunction<String, Tuple2<String, Integer>>()
             {
                 public void flatMap(String value, Collector<Tuple2<String, Integer>> out)
                 {
+                    // splite 从kafka采集到的字符串
                     String[] words = value.split(" ");
+                    // 遍历这个字符串 输出当前行分裂出来的词的行和数目.
                     for (String word : words)
                         out.collect(new Tuple2<String, Integer>(word, 1));
                 }	
             }
         ).keyBy(0).sum(1).writeAsText("/Users/caolei/Desktop/big-data/workspace_mvn/flink-kafka/flinkkafka/kafka.txt");
+        //通过第一列进行sum,写入文件中.来一行写一次统计.
+        // 比如过来的是hello world
+        // 输出为 
+        // hello 1 
+        // world 1
+        // 如果增加一个时间参数,就能得到 hello 1 2020-1-20 这个条数据保存到hdfs中.
+        // 下一秒又来了一个 hello 则 hello为2 2020-1-21 写入文件. 这样得到的是一个时序统计数据.
+        // 换成sql 一样的某个字段在增加. 这种流数据是不变的. 汇总结果如果不是增量写入,而是批量的写入.
+        // 并且可以更新, 比如A pro的得分总数 变成188分. 一次写入一组 1000个用户信息.或者是5分钟内的.这样就是流运算了.
+        // 用户或者运营商那里的显示还是直接读表.可以是mysql.但是显示时要加上时序.就变成动态的数据展示了. 有总数汇总.还有每小时,每分钟的统计.
+        // 如果超过某个设定值,就可以触发报警或者其他消息. 关键这整个系统是分布式实现的可以很容扩展.
+        // flink也是类似spark那样分布式处理.可以集中内存和cpu.进行运算.
+        // 
+
+
+
 
         //*/
 
